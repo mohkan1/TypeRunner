@@ -25,10 +25,12 @@
         <div class = "row text-center">
             <div class = "col">
                 <h3 class = "red_button">TypeRunner</h3>
-                <h6>Level</h6>
-                <button type="button" level = "20" id = "level_1" class="level btn btn-secondary">1</button>
-                <button type="button" level = "50" class="level btn btn-light">2</button>
-                <button type="button" level = "100" class="level btn btn-light">3</button>
+                <div id = "level_wrapper">
+                    <h6>Level</h6>
+                    <button type="button" level = "20" id = "level_1" class="level btn btn-secondary">1</button>
+                    <button type="button" level = "50" class="level btn btn-light">2</button>
+                    <button type="button" level = "100" class="level btn btn-light">3</button>
+                </div>
             </div>
         </div>
         
@@ -3077,7 +3079,7 @@ $( document ).ready(function() {
     storage = storage.length > 0 ? JSON.parse(storage) : [];
     
     console.log("storage", storage);
-    let counter_state = true;
+    let counter_state = false;
     
    
     let letters =  {
@@ -3137,13 +3139,14 @@ $( document ).ready(function() {
 
     function change_word_color(index, background_color, font_color){
 
-        document.getElementById("word_" + index).setAttribute("style", `background-color: ${background_color};font-size: 20px;color:${font_color}`);
+        document.getElementById("word_" + index).setAttribute("style", `background-color: ${background_color};font-size: 20px;color:${font_color}; border-radius: 3px;`);
     }
 
-    change_word_color(counter, "gray", "white");
 
     $("#user-input").on("keyup change", function(e) {
-        let key = e.key;   
+        let key = e.key;  
+        counter_state = true;
+        $("#level_wrapper").remove();
         
         if(key == " "){
             
@@ -3160,25 +3163,35 @@ $( document ).ready(function() {
                     list_correct.forEach( (char,index)=>{
                         if(list_correct[index] !== user_input[index]){
                             letters[char] += 1;
+                            
+                            if(counter == 0){
+                                change_word_color(counter, "white", "red");
+                                change_word_color(counter + 1, "gray", "white");
+            
+                            }else if (counter == words.length - 1){
+                                change_word_color(counter, "gray", "red");
+                            
+                            }else{
+                                change_word_color(counter, "white", "red");
+                                change_word_color(counter + 1, "gray", "white");
+                            }
                         }
                     })
     
                 }else{
                     score += 1;
-                }
-                // console.log(letters)
-                // plot();
-                
-                if(counter == 0){
-                    change_word_color(counter, "white", "black");
-                    change_word_color(counter + 1, "gray", "white");
-
-                }else if (counter == words.length - 1){
-                    change_word_color(counter, "gray", "white");
-                
-                }else{
-                    change_word_color(counter, "white", "black");
-                    change_word_color(counter + 1, "gray", "white");
+                     
+                    if(counter == 0){
+                        change_word_color(counter, "white", "green");
+                        change_word_color(counter + 1, "gray", "white");
+    
+                    }else if (counter == words.length - 1){
+                        change_word_color(counter, "gray", "green");
+                    
+                    }else{
+                        change_word_color(counter, "white", "green");
+                        change_word_color(counter + 1, "gray", "white");
+                    }
                 }
 
                 counter += 1;
@@ -3204,6 +3217,7 @@ $( document ).ready(function() {
         $("#user-input").val("");
         $("#user-input").remove();
         $("#text_wrapper").remove();
+        $("#timer").remove();    
         change_word_color(counter, "gray", "white");
 
     }
@@ -3274,7 +3288,7 @@ $( document ).ready(function() {
         	data: {
         		labels: Object.keys(letters),
             datasets: [{
-        			label: "You types these letters X number of times",
+        			label: "You types these letters wrong X number of times",
         			backgroundColor: 'lightblue',
         			borderColor: 'royalblue',
         			data: Object.values(letters),
@@ -3326,6 +3340,8 @@ $( document ).ready(function() {
             span.setAttribute("style", "font-size: 20px;");
             document.getElementById("text_wrapper").append(span);
         })
+        
+        change_word_color(counter, "gray", "white");
 
     }
     
