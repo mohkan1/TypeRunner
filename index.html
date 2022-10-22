@@ -25,6 +25,10 @@
         <div class = "row text-center">
             <div class = "col">
                 <h3 class = "red_button">TypeRunner</h3>
+                <h6>Level</h6>
+                <button type="button" level = "20" id = "level_1" class="level btn btn-secondary">1</button>
+                <button type="button" level = "50" class="level btn btn-light">2</button>
+                <button type="button" level = "100" class="level btn btn-light">3</button>
             </div>
         </div>
         
@@ -59,6 +63,8 @@
 
 $( document ).ready(function() {
     let counter = 0;
+    let words = [];
+    
     
     let common_words = [
 
@@ -3059,41 +3065,9 @@ $( document ).ready(function() {
         "zone",
     ]
     
-    let words = [];
+    let level_one = parseInt($("#level_1").attr("level"));
     
-    let number_of_words = 20;
-    let random_word_index = []
-
-    for (let index = 0; index < number_of_words; index++) {
-        let random_index = Math.floor(Math.random() * common_words.length);
-        if(random_word_index.includes(random_index)){
-            while(random_word_index.includes(random_index)){
-                random_index = Math.floor(Math.random() * common_words.length);
-    
-            }
-            random_word_index.push(random_index);
-        }else{
-            random_word_index.push(random_index);
-        }
-    }
-    
-    random_word_index.forEach((word_index, _) => {
-        words.push(common_words[word_index]);
-    }); 
-    
-    console.log(random_word_index);
-    
-
-    words.forEach((word,index)=>{
-        let span = document.createElement("span");
-        span.setAttribute("id", "word_" + index);
-        
-        let space = index == words.length - 1 ? "" : " ";
-        span.innerHTML = word + space;
-        
-        span.setAttribute("style", "font-size: 20px;");
-        document.getElementById("text_wrapper").append(span);
-    })
+    repare_words(level_one);
     
     let score = 0;
     
@@ -3230,6 +3204,7 @@ $( document ).ready(function() {
     })
     // plot();
     
+    
 
             
     let canvas = document.createElement("canvas");
@@ -3250,7 +3225,7 @@ $( document ).ready(function() {
         	data: {
         		labels: storage.map(x => x[0]),
             datasets: [{
-        			label: "Score over time",
+        			label: "Score over time in %",
         			backgroundColor: 'lightblue',
         			borderColor: 'royalblue',
         			data: storage.map(x => x[1]),
@@ -3296,7 +3271,7 @@ $( document ).ready(function() {
         	data: {
         		labels: Object.keys(letters),
             datasets: [{
-        			label: "Letters you types wrong",
+        			label: "You types these letters X number of times",
         			backgroundColor: 'lightblue',
         			borderColor: 'royalblue',
         			data: Object.values(letters),
@@ -3315,8 +3290,54 @@ $( document ).ready(function() {
         
     }
     
+    function repare_words(number){
+        $("#text_wrapper").empty();
+        let number_of_words = number;
+        let random_word_index = []
+        words = []
+    
+        for (let index = 0; index < number_of_words; index++) {
+            let random_index = Math.floor(Math.random() * common_words.length);
+            if(random_word_index.includes(random_index)){
+                while(random_word_index.includes(random_index)){
+                    random_index = Math.floor(Math.random() * common_words.length);
+        
+                }
+                random_word_index.push(random_index);
+            }else{
+                random_word_index.push(random_index);
+            }
+        }
+        
+        random_word_index.forEach((word_index, _) => {
+            words.push(common_words[word_index]);
+        }); 
+        
+        words.forEach((word,index)=>{
+            let span = document.createElement("span");
+            span.setAttribute("id", "word_" + index);
+            
+            let space = index == words.length - 1 ? "" : " ";
+            span.innerHTML = word + space;
+            
+            span.setAttribute("style", "font-size: 20px;");
+            document.getElementById("text_wrapper").append(span);
+        })
+
+    }
+    
     $(document).on("click","#play_again",function() {
         window.location.reload(true);
+    });
+    
+    $(document).on("click",".level",function() {
+        let level = $(this).attr("level");
+        
+        repare_words(parseInt(level));
+        
+        $(".level").attr("class", "level btn btn-light");
+        $(this).attr("class", "level btn btn-secondary");
+
     });
     
 
