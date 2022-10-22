@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+
+    <title>Document</title>
+</head>
+
+<style>
+
+.red_button{
+    color:red;
+}
+
+</style>
+
+<body>
+    
+    <div class = "wrapper container text-center">
+        <div class = "row text-center">
+            <div class = "col">
+                <h3 class = "red_button">TypeRunner</h3>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class = "col" id = "text_wrapper">
+                <!-- <p id = "text">the at there some my of be use her than and this an would first a have each make water to from which like been in or she him call is one do into who you had how time oil that by their has its it word if look now he but will two find was not up more long for what other write down on all about go day are were out see did as we many number get with when then no come his your them way made they can these could may I said so people par</p> -->
+                <!-- <p id = "text">I like to have a pizza</p> -->
+            </div>
+        </div>
+        <br>
+
+        <div class = "row">
+            <div class = "col">
+                <div class = "form-group">
+                    <input id = "user-input" type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                </div>
+            </div>
+        </div>
+
+        <div class = "row text-center">
+            <div class = "col">
+                <div>
+                    <canvas id="plotChart" width="1100" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+          
+    </div>
+</body>
+
+<script>
+
+$( document ).ready(function() {
+    let counter = 0;
+    let words = "I like to have a pizza ".split(" ");
+
+    words.forEach((word,index)=>{
+        let span = document.createElement("span");
+        span.setAttribute("id", "word_" + index);
+        span.innerHTML = word + " ";
+        span.setAttribute("style", "font-size: 20px;");
+        document.getElementById("text_wrapper").append(span);
+    })
+
+    console.log(words);
+   
+    let letters =  {
+        "a":0,
+        "b":0,
+        "c":0,
+        "d":0,
+        "e":0,
+        "f":0,
+        "g":0,
+        "h":0,
+        "i":0,
+        "j":0,
+        "k":0,
+        "l":0,
+        "m":0,
+        "n":0,
+        "o":0,
+        "p":0,
+        "q":0,
+        "r":0,
+        "s":0,
+        "t":0,
+        "u":0,
+        "v":0,
+        "w":0,
+        "x":0,
+        "y":0,
+        "z":0,
+        'A': 0,
+        'B': 0,
+        'C': 0,
+        'D': 0,
+        'E': 0,
+        'F': 0,
+        'G': 0,
+        'H': 0,
+        'I': 0,
+        'J': 0,
+        'K': 0,
+        'L': 0,
+        'M': 0,
+        'N': 0,
+        'O': 0,
+        'P': 0,
+        'Q': 0,
+        'R': 0,
+        'S': 0,
+        'T': 0,
+        'U': 0,
+        'V': 0,
+        'W': 0,
+        'X': 0,
+        'Y': 0,
+        'Z': 0,
+    };
+
+    function change_word_color(index, background_color, font_color){
+
+        document.getElementById("word_" + index).setAttribute("style", `background-color: ${background_color};font-size: 20px;color:${font_color}`);
+    }
+
+    change_word_color(counter, "gray", "white");
+
+    $("#user-input").on("keyup change", function(e) {
+        let key = e.key; 
+        if(key == " "){
+            if(counter == words.length -1){
+                plot();
+                console.log(counter,words.length -1)
+                $("#user-input").val("");
+                $("#user-input").attr("readonly", true);
+                change_word_color(counter, "white", "black");
+                change_word_color(counter + 1, "gray", "white");
+            
+            }else{
+
+                let correct_word = words[counter]
+    
+                let user_input = $("#user-input").val(); 
+                user_input = user_input.trim();
+                $("#user-input").val("");
+                
+                if(user_input !== correct_word){
+                    let list_correct = correct_word.split("");
+                    let list_user = user_input.split("");
+                    
+                    list_correct.forEach( (char,index)=>{
+                        if(list_correct[index] !== user_input[index]){
+                            letters[char] += 1;
+                        }
+                    })
+                
+    
+                }
+                console.log(letters)
+                // plot();
+                
+                if(counter == 0){
+                    change_word_color(counter, "white", "black");
+                    change_word_color(counter + 1, "gray", "white");
+
+                }else{
+                    change_word_color(counter, "white", "black");
+                    change_word_color(counter + 1, "gray", "white");
+                }
+
+                counter += 1;
+            }
+
+        }
+    })
+    // plot();
+
+    function plot(){
+
+        var barData = {
+            labels : Object.keys(letters),
+            datasets : [
+                {
+                    fillColor : "#48A497",
+                    strokeColor : "#48A4D1",
+                    data : Object.values(letters),
+                },
+            ]
+        }
+    
+        var plotChart = document.getElementById("plotChart").getContext("2d");
+        new Chart(plotChart).Bar(barData);
+    }
+
+
+
+});
+
+</script>
+
+
+</html>
