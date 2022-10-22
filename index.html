@@ -43,7 +43,8 @@
         <div class = "row">
             <div class = "col">
                 <div class = "form-group">
-                    <input id = "user-input" type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    <input id = "user-input" type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" onpaste="return false;" ondrop="return false;" autocomplete="off">
+                    <p id = "timer">60s</p>
                 </div>
             </div>
         </div>
@@ -3073,12 +3074,11 @@ $( document ).ready(function() {
     
     let storage = []
     storage = window.localStorage.getItem('score_per_day');
-    storage = JSON.parse(storage);
-    storage = storage == null ? [] : storage;
+    storage = storage.length > 0 ? JSON.parse(storage) : [];
     
     console.log("storage", storage);
+    let counter_state = true;
     
-    // console.log(words);
    
     let letters =  {
         "a":0,
@@ -3186,24 +3186,27 @@ $( document ).ready(function() {
             console.log("counter", counter, words.length)
             if(counter == words.length){
                 
-                let today = new Date().toLocaleDateString()
-                console.log("today", [today, ((score/words.length)*100).toFixed(2)])
-                storage.push([today, ((score/words.length)*100).toFixed(2)])
-                
-                window.localStorage.setItem('score_per_day', JSON.stringify(storage));
-                plot();
-                $("#user-input").val("");
-                $("#user-input").remove();
-                $("#text_wrapper").remove();
-                // change_word_color(counter, "white", "black");
-                change_word_color(counter, "gray", "white");
-                
-            
+                end();                
+                counter_state = false;
             }
         }
     })
     // plot();
     
+    
+    function end(){
+        let today = new Date().toLocaleDateString()
+        console.log("today", [today, ((score/words.length)*100).toFixed(2)])
+        storage.push([today, ((score/words.length)*100).toFixed(2)])
+        
+        window.localStorage.setItem('score_per_day', JSON.stringify(storage));
+        plot();
+        $("#user-input").val("");
+        $("#user-input").remove();
+        $("#text_wrapper").remove();
+        change_word_color(counter, "gray", "white");
+
+    }
     
 
             
@@ -3339,6 +3342,24 @@ $( document ).ready(function() {
         $(this).attr("class", "level btn btn-secondary");
 
     });
+    
+    
+    setInterval(function(){
+    if(counter_state){
+
+        let timer = parseInt($("#timer").text().split("s")[0]);
+        
+        if(timer == 0){
+            end(); 
+        }else{
+            timer -= 1;
+            $("#timer").text(timer + "s")
+        }
+        
+        
+    }
+    
+    }, 1000);
     
 
 });
