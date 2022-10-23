@@ -18,6 +18,11 @@
     color:red;
 }
 
+.container{
+    border: 1px solid #000000;
+    margin-top: 2%;
+}
+
 </style>
 
 <body>    
@@ -52,10 +57,10 @@
         </div>
 
         
-    </div>
-    <div class = "row text-center">
-        <div class = "col">
-            <div   id = "char_wrapper">
+        <div class = "row text-center">
+            <div class = "col">
+                <div   id = "char_wrapper">
+                </div>
             </div>
         </div>
     </div>
@@ -67,7 +72,6 @@
 $( document ).ready(function() {
     let counter = 0;
     let words = [];
-    
     
     let common_words = [
 
@@ -3069,13 +3073,15 @@ $( document ).ready(function() {
     ]
     
     let level_one = parseInt($("#level_1").attr("level"));
+
     
-    repare_words(level_one);
+    prepare_words(level_one);
     
     let score = 0;
     
     let storage = []
     storage = window.localStorage.getItem('score_per_day');
+    storage = storage == null ? [] : storage;
     storage = storage.length > 0 ? JSON.parse(storage) : [];
     
     console.log("storage", storage);
@@ -3139,7 +3145,7 @@ $( document ).ready(function() {
 
     function change_word_color(index, background_color, font_color){
 
-        document.getElementById("word_" + index).setAttribute("style", `background-color: ${background_color};font-size: 20px;color:${font_color}; border-radius: 3px;`);
+        document.getElementById("word_" + index).setAttribute("style", `background-color: ${background_color};font-size: 25px;color:${font_color}; border-radius: 3px;`);
     }
 
 
@@ -3164,34 +3170,13 @@ $( document ).ready(function() {
                         if(list_correct[index] !== user_input[index]){
                             letters[char] += 1;
                             
-                            if(counter == 0){
-                                change_word_color(counter, "white", "red");
-                                change_word_color(counter + 1, "gray", "white");
-            
-                            }else if (counter == words.length - 1){
-                                change_word_color(counter, "gray", "red");
-                            
-                            }else{
-                                change_word_color(counter, "white", "red");
-                                change_word_color(counter + 1, "gray", "white");
-                            }
+                            text_to_color("red");
                         }
                     })
     
                 }else{
                     score += 1;
-                     
-                    if(counter == 0){
-                        change_word_color(counter, "white", "green");
-                        change_word_color(counter + 1, "gray", "white");
-    
-                    }else if (counter == words.length - 1){
-                        change_word_color(counter, "gray", "green");
-                    
-                    }else{
-                        change_word_color(counter, "white", "green");
-                        change_word_color(counter + 1, "gray", "white");
-                    }
+                    text_to_color("green");
                 }
 
                 counter += 1;
@@ -3205,6 +3190,21 @@ $( document ).ready(function() {
         }
     })
     // plot();
+
+    function text_to_color(color){
+
+        if(counter == 0){
+            change_word_color(counter, "white", color);
+            change_word_color(counter + 1, "gray", "white");
+
+        }else if (counter == words.length - 1){
+            change_word_color(counter, "gray", color);
+        
+        }else{
+            change_word_color(counter, "white", color);
+            change_word_color(counter + 1, "gray", "white");
+        }
+    }
     
     
     function end(){
@@ -3303,11 +3303,17 @@ $( document ).ready(function() {
         replay.setAttribute("id", "play_again");
         replay.innerHTML = "Play again!"
         document.getElementById("char_wrapper").append(replay)
+
+        let br = document.createElement("br");
+        document.getElementById("char_wrapper").append(br)
+        document.getElementById("char_wrapper").append(br)
+        document.getElementById("char_wrapper").append(br)
+        document.getElementById("char_wrapper").append(br)
         
         
     }
     
-    function repare_words(number){
+    function prepare_words(number){
         $("#text_wrapper").empty();
         let number_of_words = number;
         let random_word_index = []
@@ -3337,7 +3343,7 @@ $( document ).ready(function() {
             let space = index == words.length - 1 ? "" : " ";
             span.innerHTML = word + space;
             
-            span.setAttribute("style", "font-size: 20px;");
+            span.setAttribute("style", "font-size: 25px;");
             document.getElementById("text_wrapper").append(span);
         })
         
@@ -3352,7 +3358,7 @@ $( document ).ready(function() {
     $(document).on("click",".level",function() {
         let level = $(this).attr("level");
         
-        repare_words(parseInt(level));
+        prepare_words(parseInt(level));
         
         $(".level").attr("class", "level btn btn-light");
         $(this).attr("class", "level btn btn-secondary");
